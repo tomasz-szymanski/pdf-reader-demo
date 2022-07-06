@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 @Service
 public class PdfParserService {
-    public String parse(String pathToFile) {
-        File file = Paths.get(pathToFile).toFile();
+    public String parse(File file) {
         if(file.canRead())  {
             try (PDDocument document = PDDocument.load(file)) {
                 PDFTextStripperByArea stripper = new PDFTextStripperByArea();

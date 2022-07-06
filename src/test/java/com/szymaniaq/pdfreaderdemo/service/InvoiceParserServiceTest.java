@@ -1,9 +1,14 @@
 package com.szymaniaq.pdfreaderdemo.service;
 
 import com.szymaniaq.pdfreaderdemo.invoice.Invoice;
+import com.szymaniaq.pdfreaderdemo.parser.InvoiceIssuer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,11 +21,12 @@ class InvoiceParserServiceTest {
     private PdfParserService pdfParserService;
 
     @Test
-    void shouldProvideNotEmptyInvoice() {
+    void shouldParseInvoiceForOrange() {
         //given
-        String invoiceContent = pdfParserService.parse(INVOICE_PATH);
+        File file = Paths.get(INVOICE_PATH).toFile();
+        String invoiceContent = pdfParserService.parse(file);
         //when
-        Invoice invoice = invoiceParserService.getInvoice(invoiceContent);
+        Invoice invoice = invoiceParserService.getInvoice(InvoiceIssuer.ORANGE, invoiceContent);
         //then
         assertThat(invoice).isNotNull();
         assertThat(invoice.invoiceNumber()).isNotBlank();
@@ -32,6 +38,11 @@ class InvoiceParserServiceTest {
         assertThat(invoice.amount()).isNotBlank();
         assertThat(invoice.amount()).isEqualTo("69,83");
 
+        assertThat(invoice.dueDate()).isNotNull();
+        assertThat(invoice.dueDate()).isEqualTo(LocalDate.of(2022, 6, 15));
+
+        assertThat(invoice.title()).isNotBlank();
+        assertThat(invoice.title()).isEqualTo("F0082820732/006/22");
 
     }
 }
